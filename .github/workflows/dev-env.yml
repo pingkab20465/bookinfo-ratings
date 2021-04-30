@@ -7,9 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      # Don't need to checkout ('docker/build-push-action@v2' use git context to build by default)
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -47,3 +44,9 @@ jobs:
                 "COMMIT_SHA": "${{ github.sha }}"
               }
             }
+  acceptance-test:
+    needs: deploy
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check health check page
+        run: curl http://bookinfo.dev.opsta.net/student94/ratings/health | grep "Ratings is working"
